@@ -1,6 +1,8 @@
 package net.mcloud.api.command;
 
 
+import net.mcloud.MCloud;
+import net.mcloud.api.events.server.ConsoleCommandSendEvent;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -18,8 +20,11 @@ public class ConsoleCommandHandler {
     private String command_name;
     private ArrayList<String> args;
 
+    public ConsoleCommandHandler(CommandMap commandMap) {
+        this.COMMAND_MAP = commandMap;
+    }
+
     public void startConsoleInput() {
-        this.COMMAND_MAP = new CommandMap();
         this.args = new ArrayList<>();
         Terminal terminal = null;
         try {
@@ -35,7 +40,7 @@ public class ConsoleCommandHandler {
                 .build();
 
         String prompt = "dragon> ";
-        while (true) {
+        while (MCloud.getCloud().isEnabled()) {
             String line;
             try {
                 line = lineReader.readLine(prompt);
@@ -46,8 +51,13 @@ public class ConsoleCommandHandler {
                         args.add(s);
                     }
                 }
-                COMMAND_MAP.getMap().get(command_name).execute(command_name, args);
-                args.clear();
+                ConsoleCommandSendEvent event = new ConsoleCommandSendEvent(command_name, args);
+                if(!event.isCancelled()) {
+                    MCloud.getCloud().getCloudManager().callEvent(event);
+                    if (getCommandMap() == null) return;
+                    getCommandMap().getMap().get(command_name).execute(command_name, args);
+                    args.clear();
+                }
 
             } catch (UserInterruptException | EndOfFileException e){
                 e.printStackTrace();

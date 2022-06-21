@@ -80,6 +80,16 @@ public class JsonConfigBuilder {
         }
     }
 
+    public Object setObject(String key, Object value) {
+        try {
+            this.jsonConfig.put(key, value);
+            return value;
+        } catch (JSONException exception) {
+            saveConfig();
+            return null;
+        }
+    }
+
     public List<Object> getList(String key) {
         try {
             return this.jsonConfig.getJSONArray(key).toList();
