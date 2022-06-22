@@ -24,7 +24,8 @@ public class MCloud {
     private JsonConfigBuilder jsonConfigBuilder;
     private CloudSettings cloudSettings;
 
-    public void mCloud() {
+
+    public MCloud() {
         mCloud = this;
         isEnabled = true;
         this.jsonConfigBuilder = new JsonConfigBuilder("cloudsettings", "settings");
@@ -38,6 +39,14 @@ public class MCloud {
         setDefaultSettings();
     }
 
+    public static void main(String[] args) {
+        MCloud mCloud = new MCloud();
+    }
+
+    public static MCloud getCloud() {
+        return mCloud;
+    }
+
     public void setDefaultSettings() {
         this.cloudSettings = new CloudSettings(54555, 54777, true);
         this.jsonConfigBuilder.getObject("cloud", this.cloudSettings);
@@ -45,10 +54,10 @@ public class MCloud {
 
     public void shutdown() {
         MCloudStopEvent event = new MCloudStopEvent("The System Shutdown Normal");
-            this.cloudManager.callEvent(event);
-            this.getLogger().log(LoggerType.INFO, "The MCloud is try to shutdown");
-            isEnabled = false;
-            HandlerList.unregisterAll();
+        this.cloudManager.callEvent(event);
+        this.getLogger().log(LoggerType.INFO, "The MCloud is try to shutdown");
+        isEnabled = false;
+        HandlerList.unregisterAll();
     }
 
     private void registerListener() {
@@ -63,21 +72,12 @@ public class MCloud {
         commandMap.register("stop", new CloudStopCommand(this));
     }
 
-    public static void main(String[] args) {
-        MCloud mCloud = new MCloud();
-        mCloud.mCloud();
-    }
-
     public Logger getLogger() {
         return logger;
     }
 
     public CloudManager getCloudManager() {
         return cloudManager;
-    }
-
-    public static MCloud getCloud() {
-        return mCloud;
     }
 
     public CommandMap getCommandMap() {
