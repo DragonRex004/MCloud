@@ -17,26 +17,30 @@ import net.mcloud.utils.logger.LoggerType;
 public class MCloud {
     private static MCloud mCloud;
     private boolean isEnabled;
-    private JsonConfigBuilder settings;
     private CloudManager cloudManager;
-    private CloudSettings cloudSettings;
     private ConsoleCommandHandler commandHandler;
     private CommandMap commandMap;
     private Logger logger;
+    private JsonConfigBuilder jsonConfigBuilder;
+    private CloudSettings cloudSettings;
 
     public void mCloud() {
         mCloud = this;
         isEnabled = true;
-        this.settings = new JsonConfigBuilder("cloud", "settings");
-        this.cloudManager = new CloudManager();
-        this.cloudSettings = new CloudSettings(this.settings);
+        this.jsonConfigBuilder = new JsonConfigBuilder("cloudsettings", "settings");
+        this.cloudManager = new CloudManager(this.jsonConfigBuilder);
         this.commandHandler = new ConsoleCommandHandler(new CommandMap());
         this.commandMap = commandHandler.getCommandMap();
-        this.cloudSettings.setDefaultSettings();
         this.logger = new Logger();
         registerListener();
         registerCommand();
         this.commandHandler.startConsoleInput();
+        setDefaultSettings();
+    }
+
+    public void setDefaultSettings() {
+        this.cloudSettings = new CloudSettings(54555, 54777, true);
+        this.jsonConfigBuilder.getObject("cloud", this.cloudSettings);
     }
 
     public void shutdown() {
@@ -80,11 +84,15 @@ public class MCloud {
         return commandMap;
     }
 
-    public CloudSettings getCloudSettings() {
-        return cloudSettings;
-    }
-
     public boolean isEnabled() {
         return isEnabled;
+    }
+
+    public JsonConfigBuilder getJsonConfigBuilder() {
+        return jsonConfigBuilder;
+    }
+
+    public CloudSettings getCloudSettings() {
+        return cloudSettings;
     }
 }

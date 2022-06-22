@@ -1,21 +1,37 @@
 package net.mcloud.utils.json;
 
 public class CloudSettings {
-    private JsonConfigBuilder settings;
+    private int UDP_PORT_CLOUD_MANAGER;
+    private int TCP_PORT_CLOUD_MANAGER;
+    private boolean SETTINGS_DEPRECATED_EVENTS;
 
-    public CloudSettings(JsonConfigBuilder jsonConfigBuilder) {
-        this.settings = jsonConfigBuilder;
+    public CloudSettings(int tcp_port, int udp_port, boolean deprecated_events) {
+        this.TCP_PORT_CLOUD_MANAGER = tcp_port;
+        this.UDP_PORT_CLOUD_MANAGER = udp_port;
+        this.SETTINGS_DEPRECATED_EVENTS = deprecated_events;
     }
 
-    public JsonSettingsResponseType setDefaultSettings() {
-        settings.getBoolean("settings-deprecated-events", true);
-        settings.getInteger("tcp-port-cloud-manager", 54555);
-        settings.getInteger("udp-port-cloud-manager", 54777);
-        settings.getBoolean("settings-edited" , false);
-        return JsonSettingsResponseType.SUCCESS;
+    public int getTcpPort() {
+        return TCP_PORT_CLOUD_MANAGER;
     }
 
-    public JsonConfigBuilder getSettings() {
-        return settings;
+    public int getUdpPort() {
+        return UDP_PORT_CLOUD_MANAGER;
+    }
+
+    public boolean isSettingsDeprecatedEvents() {
+        return SETTINGS_DEPRECATED_EVENTS;
+    }
+
+    public void setUdpPort(int value) {
+        this.UDP_PORT_CLOUD_MANAGER = value;
+    }
+
+    public void setTcpPort(int value) {
+        this.TCP_PORT_CLOUD_MANAGER = value;
+    }
+
+    public void setSettingsDeprecatedEvents(boolean value) {
+        this.SETTINGS_DEPRECATED_EVENTS = value;
     }
 }

@@ -80,32 +80,33 @@ public class JsonConfigBuilder {
         }
     }
 
-    public Object setObject(String key, Object value) {
+    public void setObject(String key,Object newValue, Object defaultValue) {
         try {
-            this.jsonConfig.put(key, value);
-            return value;
-        } catch (JSONException exception) {
+            this.jsonConfig.put(key, newValue);
             saveConfig();
-            return null;
+        } catch (JSONException exception) {
+            jsonConfig.put(key, defaultValue);
+            saveConfig();
         }
     }
 
-    public List<Object> getList(String key) {
+    public List<Object> getList(String key, List<Object> defaultValue) {
         try {
             return this.jsonConfig.getJSONArray(key).toList();
         } catch (JSONException exception) {
+            this.jsonConfig.put(key, defaultValue);
             saveConfig();
             return null;
         }
     }
 
-    public List<Object> setList(String key, List<Object> defaultValue) {
+    public void setList(String key, List<Object> newValue, List<Object> defaultValue) {
         try {
+            this.jsonConfig.put(key, newValue);
+            saveConfig();
+        } catch (JSONException exception) {
             this.jsonConfig.put(key, defaultValue);
             saveConfig();
-            return defaultValue;
-        } catch (JSONException exception) {
-            return null;
         }
     }
 
@@ -113,16 +114,45 @@ public class JsonConfigBuilder {
         return (Integer) getObject(key, defaultValue);
     }
 
+    public void setInteger(String key, Integer newValue, Integer defaultValue) {
+        this.setObject(key, newValue, defaultValue);
+        saveConfig();
+    }
+
     public String getString(String key, String defaultValue) {
         return (String) getObject(key, defaultValue);
+    }
+
+    public void setString(String key, String newValue, String defaultValue) {
+        this.setObject(key, newValue, defaultValue);
+        saveConfig();
     }
 
     public Boolean getBoolean(String key, Boolean defaultValue) {
         return (Boolean) getObject(key, defaultValue);
     }
 
+    public void setBoolean(String key, Boolean newValue, Boolean defaultValue) {
+        this.setObject(key, newValue, defaultValue);
+        saveConfig();
+    }
+
     public Double getDouble(String key, Double defaultValue) {
         return (Double) getObject(key, defaultValue);
+    }
+
+    public void setDouble(String key, Double newValue, Double defaultValue) {
+        this.setObject(key, newValue, defaultValue);
+        saveConfig();
+    }
+
+    public Float getFloat(String key, Float defaultValue) {
+        return (Float) getObject(key, defaultValue);
+    }
+
+    public void setFloat(String key, Float newValue, Float defaultValue) {
+        this.setObject(key, newValue, defaultValue);
+        saveConfig();
     }
 
     public JSONObject getJsonConfig() {

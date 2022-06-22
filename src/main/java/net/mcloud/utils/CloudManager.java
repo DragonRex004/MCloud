@@ -1,16 +1,21 @@
 package net.mcloud.utils;
 
-import com.google.common.io.LineReader;
 import net.mcloud.MCloud;
 import net.mcloud.api.events.*;
 import net.mcloud.utils.exceptions.CloudException;
-import net.mcloud.utils.exceptions.ShortException;
+import net.mcloud.utils.json.CloudSettings;
+import net.mcloud.utils.json.JsonConfigBuilder;
 import net.mcloud.utils.logger.LoggerType;
 
 import java.lang.reflect.Method;
 import java.util.*;
 
 public class CloudManager {
+    private CloudSettings cloudSettings;
+
+    public CloudManager(JsonConfigBuilder jsonConfigBuilder) {
+        this.cloudSettings = (CloudSettings) jsonConfigBuilder.getObject("cloud", MCloud.getCloud().getCloudSettings());
+    }
 
     public void callEvent(Event event) {
         try {
@@ -67,7 +72,7 @@ public class CloudManager {
             for (Class<?> clazz = eventClass; Event.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) {
                 // This loop checks for extending deprecated events
                 if(clazz.getAnnotation(Deprecated.class) != null) {
-                    if(Boolean.parseBoolean(String.valueOf(mCloud.getCloudSettings().getSettings().getBoolean("settings-deprecated-events", true)))) {
+                    if(this.cloudSettings.isSettingsDeprecatedEvents()) {
                         mCloud.getLogger().log(LoggerType.WARNING, "MCloud.cloud.deprecatedEvent " + clazz.getName());
                     }
                     break;
