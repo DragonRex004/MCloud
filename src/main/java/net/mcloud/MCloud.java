@@ -1,5 +1,6 @@
 package net.mcloud;
 
+import com.lambdaworks.redis.RedisURI;
 import lombok.Getter;
 import net.mcloud.api.command.CommandMap;
 import net.mcloud.api.command.ConsoleCommandHandler;
@@ -7,18 +8,16 @@ import net.mcloud.api.command.defaultcommands.CloudStopCommand;
 import net.mcloud.api.command.defaultcommands.HelpCommand;
 import net.mcloud.api.events.HandlerList;
 import net.mcloud.api.events.server.MCloudStopEvent;
+import net.mcloud.api.module.MCloudSubModule;
+import net.mcloud.api.module.ModuleManager;
+import net.mcloud.api.redis.RedisManager;
 import net.mcloud.test.CloudStopListener;
 import net.mcloud.test.TestCommand;
 import net.mcloud.test.TestListener;
 import net.mcloud.utils.CloudManager;
-import net.mcloud.utils.Downloader;
-import net.mcloud.utils.json.CloudSettings;
 import net.mcloud.utils.json.JsonConfigBuilder;
 import net.mcloud.utils.logger.ConsoleColor;
 import net.mcloud.utils.logger.Logger;
-
-import java.io.IOException;
-import java.net.URL;
 
 @Getter
 public class MCloud {
@@ -29,12 +28,14 @@ public class MCloud {
     private final JsonConfigBuilder jsonConfigBuilder;
     private boolean isEnabled;
     private ConsoleCommandHandler commandHandler;
-    private CloudSettings cloudSettings;
+    private ModuleManager subModuleModuleManager;
+
+    private RedisManager redisManager;
 
 
     public MCloud() {
         mCloud = this;
-        this.logger = new Logger();
+        this.logger = new Logger("");
         Runtime.getRuntime().addShutdownHook(new ShutdownTask());
 
         logger.info("""          
@@ -50,14 +51,36 @@ public class MCloud {
 
         logger.info("Cloud starting... ", ConsoleColor.GREEN);
         isEnabled = true;
+
         this.jsonConfigBuilder = new JsonConfigBuilder("cloudsettings", "settings");
-        this.cloudManager = new CloudManager(this.jsonConfigBuilder);
+
+        logger.info("Loading Settings");
+        setDefaultSettings();
+
+        logger.info("Starting Redis Client");
+        redisManager = new RedisManager(RedisURI.create(jsonConfigBuilder.getString("redisConnectionString", "redis://redispw@localhost:49153")));
+
+        this.cloudManager = new CloudManager(mCloud);
         this.commandHandler = new ConsoleCommandHandler(new CommandMap());
         this.commandMap = commandHandler.getCommandMap();
+
+        logger.info("Register Listeners");
         registerListener();
+
+        logger.info("Register Commands");
         registerCommand();
+
+        subModuleModuleManager = new ModuleManager();
+
+        logger.info("Loading Modules");
+        subModuleModuleManager.getModules().forEach(MCloudSubModule::onLoad);
+        logger.info("Starting Modules");
+        subModuleModuleManager.getModules().forEach(MCloudSubModule::onStart);
+
+
+        logger.info("Starting ConsoleInput");
         this.commandHandler.startConsoleInput();
-        setDefaultSettings();
+        logger.info("Finished! Cloud ready.", ConsoleColor.GREEN);
     }
 
     public static void main(String[] args) {
@@ -69,16 +92,10 @@ public class MCloud {
     }
 
     public void setDefaultSettings() {
-        this.cloudSettings = new CloudSettings(54555, 54777, true);
-        this.jsonConfigBuilder.getObject("cloud", this.cloudSettings);
-    }
-
-    public void shutdown() {
-        MCloudStopEvent event = new MCloudStopEvent("The System Shutdown Normal");
-        this.cloudManager.callEvent(event);
-        this.getLogger().warn("The cloud is trying to shutdown");
-        isEnabled = false;
-        HandlerList.unregisterAll();
+        jsonConfigBuilder.setInteger("udp-port", 54777, 54777);
+        jsonConfigBuilder.setInteger("tcp-port", 54555, 54555);
+        jsonConfigBuilder.setBoolean("deprecated-events", true, true);
+        jsonConfigBuilder.setString("redisConnectionString", "redis://redispw@localhost:49153", "redis://redispw@localhost:49153");
     }
 
     private void registerListener() {
@@ -101,7 +118,15 @@ public class MCloud {
     private class ShutdownTask extends Thread {
         @Override
         public void run() {
-            shutdown();
+            getLogger().warn("The cloud is trying to shutdown");
+            MCloudStopEvent event = new MCloudStopEvent("The System Shutdown Normal");
+            cloudManager.callEvent(event);
+            getLogger().info("Stopping Modules ...");
+            getSubModuleModuleManager().getModules().forEach(MCloudSubModule::onStop);
+            getLogger().warn("Stopped Modules!");
+            isEnabled = false;
+            HandlerList.unregisterAll();
+            getLogger().info("Good bye!", ConsoleColor.PURPLE);
         }
     }
 
