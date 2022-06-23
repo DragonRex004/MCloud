@@ -4,6 +4,7 @@ package net.mcloud.api.command;
 import lombok.Getter;
 import net.mcloud.MCloud;
 import net.mcloud.api.events.server.ConsoleCommandSendEvent;
+import net.mcloud.utils.logger.ConsoleColor;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
@@ -45,7 +46,7 @@ public class ConsoleCommandHandler {
         while (MCloud.getCloud().isEnabled()) {
             String line;
             try {
-                line = lineReader.readLine(prompt);
+                line = lineReader.readLine(ConsoleColor.RESET.getColor() + prompt);
                 command_line = line.split(" ");
                 command_name = command_line[0];
                 for (String s : command_line) {

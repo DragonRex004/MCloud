@@ -10,11 +10,13 @@ public class TestCommand extends Command {
     @Override
     public CommandResponse execute(String command_name, ArrayList<String> args) {
         MCloud.getCloud().getLogger().info("The Command " + command_name + " is triggered");
+        MCloud.getCloud().getLogger().warn("The Command " + command_name + " is triggered");
+        MCloud.getCloud().getLogger().error("The Command " + command_name + " is triggered");
         return CommandResponse.SUCCESS;
     }
 
     @Override
     public String usage() {
-        return "Nur für den Test";
+        return "only for testing stuff";
     }
 }

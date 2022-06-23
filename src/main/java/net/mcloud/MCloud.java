@@ -3,10 +3,10 @@ package net.mcloud;
 import lombok.Getter;
 import net.mcloud.api.command.CommandMap;
 import net.mcloud.api.command.ConsoleCommandHandler;
-import net.mcloud.api.command.impl.HelpCommand;
+import net.mcloud.api.command.defaultcommands.HelpCommand;
 import net.mcloud.api.events.HandlerList;
 import net.mcloud.api.events.server.MCloudStopEvent;
-import net.mcloud.test.CloudStopCommand;
+import net.mcloud.api.command.defaultcommands.CloudStopCommand;
 import net.mcloud.test.CloudStopListener;
 import net.mcloud.test.TestCommand;
 import net.mcloud.test.TestListener;
@@ -32,6 +32,18 @@ public class MCloud {
         mCloud = this;
         this.logger = new Logger();
         Runtime.getRuntime().addShutdownHook(new ShutdownTask());
+
+        logger.info("""          
+                                
+                ___  ___         _____  _                    _\s
+                |  \\/  |        /  __ \\| |                  | |
+                | .  . | ______ | /  \\/| |  ___   _   _   __| |
+                | |\\/| ||______|| |    | | / _ \\ | | | | / _` |
+                | |  | |        | \\__/\\| || (_) || |_| || (_| |
+                \\_|  |_/         \\____/|_| \\___/  \\__,_| \\__,_|
+                                                              \s
+                """, ConsoleColor.CYAN);
+
         logger.info("Cloud starting... " , ConsoleColor.GREEN);
         isEnabled = true;
         this.jsonConfigBuilder = new JsonConfigBuilder("cloudsettings", "settings");
@@ -68,7 +80,7 @@ public class MCloud {
     public void shutdown() {
         MCloudStopEvent event = new MCloudStopEvent("The System Shutdown Normal");
         this.cloudManager.callEvent(event);
-        this.getLogger().error("The cloud is trying to shutdown");
+        this.getLogger().warn("The cloud is trying to shutdown");
         isEnabled = false;
         HandlerList.unregisterAll();
     }

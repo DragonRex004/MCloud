@@ -3,6 +3,7 @@ C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\Cancellable.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\json\CloudSettings.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\exceptions\EventException.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\EventExecutor.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\command\defaultcommands\HelpCommand.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\exceptions\CloudException.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\json\JsonConfigBuilder.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\test\CloudStopListener.java
@@ -12,13 +13,12 @@ C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\test\TestListener.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\exceptions\ShortException.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\RegisteredListener.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\server\ConsoleCommandSendEvent.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\command\defaultcommands\CloudStopCommand.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\command\ConsoleCommandHandler.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\MCloud.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\logger\Logger.java
-C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\command\impl\HelpCommand.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\EventHandler.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\test\TestCommand.java
-C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\test\CloudStopCommand.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\logger\ConsoleColor.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\EventPriority.java
 C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\MethodEventExecutor.java

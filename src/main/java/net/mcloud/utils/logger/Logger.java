@@ -17,22 +17,22 @@ public class Logger {
 
     public void error(String error) {
         System.out.println(ConsoleColor.BLUE.getColor() +
-                getDate() + ConsoleColor.RED.getColor() + " [ERROR] " + ConsoleColor.RED.getColor() + error);
+                getDate() + ConsoleColor.RED.getColor() + " [ERROR] " + ConsoleColor.RED.getColor() + error + ConsoleColor.RESET.getColor());
     }
 
     public void warn(String warn) {
         System.out.println(ConsoleColor.BLUE.getColor() +
-                getDate() + ConsoleColor.YELLOW.getColor() + " [WARN] " + ConsoleColor.YELLOW.getColor() + warn);
+                getDate() + ConsoleColor.YELLOW.getColor() + " [WARN] " + ConsoleColor.YELLOW.getColor() + warn + ConsoleColor.RESET.getColor());
     }
 
     public void info(String info) {
         System.out.println(ConsoleColor.BLUE.getColor() +
-                getDate() + ConsoleColor.WHITE.getColor() + " [INFO] " + ConsoleColor.RESET.getColor() + info);
+                getDate() + ConsoleColor.WHITE.getColor() + " [INFO] " + ConsoleColor.RESET.getColor() + info + ConsoleColor.RESET.getColor());
     }
 
     public void info(String info, ConsoleColor consoleColor) {
         System.out.println(ConsoleColor.BLUE.getColor() +
-                getDate() + ConsoleColor.WHITE.getColor() + " [INFO] " + consoleColor.getColor() + info);
+                getDate() + ConsoleColor.WHITE.getColor() + " [INFO] " + consoleColor.getColor() + info + ConsoleColor.RESET.getColor());
     }
 
     private String getDate() {
