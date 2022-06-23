@@ -11,6 +11,9 @@
 package net.mcloud.utils;
 
 import lombok.Getter;
+import net.mcloud.MCloud;
+import net.mcloud.utils.logger.ConsoleColor;
+import net.mcloud.utils.logger.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,22 +26,22 @@ public class Downloader {
 
     private final URL url;
     private final String fileName;
-    private final String filePath;
 
-    public Downloader(URL url, String fileName, String filePath) {
+    public Downloader(URL url, String fileName) {
         this.url = url;
         this.fileName = fileName;
-        this.filePath = filePath;
     }
 
-    public String downloadFile(){
-        InputStream in = null;
-        try {
-            in = url.openStream();
-            Files.copy(in, Path.of(filePath + "/" + fileName));
+    public void downloadFile() {
+        Logger logger = MCloud.getCloud().getLogger();
+        logger.info("Starting downloading file " + fileName, ConsoleColor.YELLOW);
+        try (InputStream in = url.openStream()) {
+            Path path = Path.of(fileName);
+            Files.copy(in, path);
+            logger.info("Download finished!");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return filePath + "/" + fileName;
+
     }
 }

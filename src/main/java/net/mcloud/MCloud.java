@@ -3,18 +3,22 @@ package net.mcloud;
 import lombok.Getter;
 import net.mcloud.api.command.CommandMap;
 import net.mcloud.api.command.ConsoleCommandHandler;
+import net.mcloud.api.command.defaultcommands.CloudStopCommand;
 import net.mcloud.api.command.defaultcommands.HelpCommand;
 import net.mcloud.api.events.HandlerList;
 import net.mcloud.api.events.server.MCloudStopEvent;
-import net.mcloud.api.command.defaultcommands.CloudStopCommand;
 import net.mcloud.test.CloudStopListener;
 import net.mcloud.test.TestCommand;
 import net.mcloud.test.TestListener;
 import net.mcloud.utils.CloudManager;
+import net.mcloud.utils.Downloader;
 import net.mcloud.utils.json.CloudSettings;
 import net.mcloud.utils.json.JsonConfigBuilder;
 import net.mcloud.utils.logger.ConsoleColor;
 import net.mcloud.utils.logger.Logger;
+
+import java.io.IOException;
+import java.net.URL;
 
 @Getter
 public class MCloud {
@@ -44,7 +48,7 @@ public class MCloud {
                                                               \s
                 """, ConsoleColor.CYAN);
 
-        logger.info("Cloud starting... " , ConsoleColor.GREEN);
+        logger.info("Cloud starting... ", ConsoleColor.GREEN);
         isEnabled = true;
         this.jsonConfigBuilder = new JsonConfigBuilder("cloudsettings", "settings");
         this.cloudManager = new CloudManager(this.jsonConfigBuilder);
@@ -54,14 +58,6 @@ public class MCloud {
         registerCommand();
         this.commandHandler.startConsoleInput();
         setDefaultSettings();
-        /*
-        try {
-            new Downloader(new URL("https://dms-pictures.pages.dev/Verdox-Naja.png"), "img.png", "test").downloadFile();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-         */
     }
 
     public static void main(String[] args) {
