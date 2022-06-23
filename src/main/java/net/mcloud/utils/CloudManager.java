@@ -5,7 +5,6 @@ import net.mcloud.api.events.*;
 import net.mcloud.utils.exceptions.CloudException;
 import net.mcloud.utils.json.CloudSettings;
 import net.mcloud.utils.json.JsonConfigBuilder;
-import net.mcloud.utils.logger.LoggerType;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -20,14 +19,14 @@ public class CloudManager {
     public void callEvent(Event event) {
         try {
             for (RegisteredListener registeredListener : getEventListeners(event.getClass()).getRegisteredListeners()) {
-                if(!registeredListener.getMCloud().isEnabled()) {
+                if (!registeredListener.getMCloud().isEnabled()) {
                     continue;
                 }
 
                 try {
                     registeredListener.callEvent(event);
                 } catch (Exception e) {
-                    MCloud.getCloud().getLogger().log(LoggerType.WARNING, "eventError " + event.getEventName());
+                    MCloud.getCloud().getLogger().warn("eventError " + event.getEventName());
                 }
             }
         } catch (IllegalAccessException e) {
@@ -49,20 +48,20 @@ public class CloudManager {
             Collections.addAll(methods, publicMethods);
             Collections.addAll(methods, privateMethods);
         } catch (NoClassDefFoundError e) {
-            MCloud.getCloud().getLogger().log(LoggerType.ERROR, "The MCloud is failed to register this Event");
+            MCloud.getCloud().getLogger().error("The MCloud is failed to register this Event");
             return;
         }
 
         for (final Method method : methods) {
             final EventHandler eh = method.getAnnotation(EventHandler.class);
-            if(eh == null) continue;
-            if(method.isBridge() || method.isSynthetic()) {
+            if (eh == null) continue;
+            if (method.isBridge() || method.isSynthetic()) {
                 continue;
             }
             final Class<?> checkClass;
 
-            if(method.getParameterTypes().length != 1 || !Event.class.isAssignableFrom(checkClass = method.getParameterTypes()[0])) {
-                mCloud.getLogger().log(LoggerType.ERROR, "attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
+            if (method.getParameterTypes().length != 1 || !Event.class.isAssignableFrom(checkClass = method.getParameterTypes()[0])) {
+                mCloud.getLogger().error("attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
                 continue;
             }
 
@@ -71,9 +70,9 @@ public class CloudManager {
 
             for (Class<?> clazz = eventClass; Event.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) {
                 // This loop checks for extending deprecated events
-                if(clazz.getAnnotation(Deprecated.class) != null) {
-                    if(this.cloudSettings.isSettingsDeprecatedEvents()) {
-                        mCloud.getLogger().log(LoggerType.WARNING, "MCloud.cloud.deprecatedEvent " + clazz.getName());
+                if (clazz.getAnnotation(Deprecated.class) != null) {
+                    if (this.cloudSettings.isSettingsDeprecatedEvents()) {
+                        mCloud.getLogger().warn("MCloud.cloud.deprecatedEvent " + clazz.getName());
                     }
                     break;
                 }
@@ -87,14 +86,14 @@ public class CloudManager {
     }
 
     public void registerEvent(Class<? extends Event> event, Listener listener, EventPriority eventPriority, EventExecutor eventExecutor, MCloud mCloud, boolean ignoreCancelled) throws CloudException {
-        if(!mCloud.isEnabled()) {
+        if (!mCloud.isEnabled()) {
             throw new CloudException("The MCloud attempted to register " + event + " while MCloud not Online");
         }
 
         try {
             this.getEventListeners(event).register(new RegisteredListener(listener, eventExecutor, eventPriority, mCloud, ignoreCancelled));
         } catch (IllegalAccessException e) {
-            mCloud.getLogger().log(LoggerType.ERROR, e.getMessage());
+            mCloud.getLogger().error(e.getMessage());
         }
     }
 
@@ -115,7 +114,7 @@ public class CloudManager {
             clazz.getDeclaredMethod("getHandlers");
             return clazz;
         } catch (NoSuchMethodException e) {
-            if(clazz.getSuperclass() != null && !clazz.getSuperclass().equals(Event.class) && Event.class.isAssignableFrom(clazz.getSuperclass())) {
+            if (clazz.getSuperclass() != null && !clazz.getSuperclass().equals(Event.class) && Event.class.isAssignableFrom(clazz.getSuperclass())) {
                 return getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
             } else {
                 throw new IllegalAccessException("Unable to find handler list for event " + clazz.getName());

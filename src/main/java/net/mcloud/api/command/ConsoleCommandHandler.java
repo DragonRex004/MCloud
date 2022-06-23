@@ -1,6 +1,7 @@
 package net.mcloud.api.command;
 
 
+import lombok.Getter;
 import net.mcloud.MCloud;
 import net.mcloud.api.events.server.ConsoleCommandSendEvent;
 import org.jline.reader.EndOfFileException;
@@ -15,13 +16,14 @@ import java.util.ArrayList;
 
 public class ConsoleCommandHandler {
 
-    private CommandMap COMMAND_MAP;
+    @Getter
+    private CommandMap commandMap;
     private String[] command_line;
     private String command_name;
     private ArrayList<String> args;
 
     public ConsoleCommandHandler(CommandMap commandMap) {
-        this.COMMAND_MAP = commandMap;
+        this.commandMap = commandMap;
     }
 
     public void startConsoleInput() {
@@ -39,7 +41,7 @@ public class ConsoleCommandHandler {
                 .terminal(terminal)
                 .build();
 
-        String prompt = "dragon> ";
+        String prompt = "Cloud> ";
         while (MCloud.getCloud().isEnabled()) {
             String line;
             try {
@@ -47,25 +49,32 @@ public class ConsoleCommandHandler {
                 command_line = line.split(" ");
                 command_name = command_line[0];
                 for (String s : command_line) {
-                    if(!s.equals(command_name)) {
+                    if (!s.equals(command_name)) {
                         args.add(s);
                     }
                 }
                 ConsoleCommandSendEvent event = new ConsoleCommandSendEvent(command_name, args);
-                if(!event.isCancelled()) {
+                if (!event.isCancelled()) {
                     MCloud.getCloud().getCloudManager().callEvent(event);
-                    if (getCommandMap() == null) return;
-                    getCommandMap().getMap().get(command_name).execute(command_name, args);
+                    if (getCommandMap() == null) {
+                        MCloud.getCloud().getLogger().error("CommandMap is null");
+                        args.clear();
+                        return;
+                    }
+                    Command command = getCommandMap().getMap().get(command_name);
+                    if (command == null) {
+                        MCloud.getCloud().getLogger().error("Dieser Command wurde nicht gefunden!");
+                        args.clear();
+                        return;
+                    }
+                    CommandResponse execute = command.execute(command_name, args);
+                    MCloud.getCloud().getLogger().info("Command " + execute.name());
                     args.clear();
                 }
 
-            } catch (UserInterruptException | EndOfFileException e){
+            } catch (UserInterruptException | EndOfFileException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    public CommandMap getCommandMap() {
-        return COMMAND_MAP;
     }
 }

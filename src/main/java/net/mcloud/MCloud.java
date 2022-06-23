@@ -1,7 +1,9 @@
 package net.mcloud;
 
+import lombok.Getter;
 import net.mcloud.api.command.CommandMap;
 import net.mcloud.api.command.ConsoleCommandHandler;
+import net.mcloud.api.command.impl.HelpCommand;
 import net.mcloud.api.events.HandlerList;
 import net.mcloud.api.events.server.MCloudStopEvent;
 import net.mcloud.test.CloudStopCommand;
@@ -11,36 +13,47 @@ import net.mcloud.test.TestListener;
 import net.mcloud.utils.CloudManager;
 import net.mcloud.utils.json.CloudSettings;
 import net.mcloud.utils.json.JsonConfigBuilder;
+import net.mcloud.utils.logger.ConsoleColor;
 import net.mcloud.utils.logger.Logger;
-import net.mcloud.utils.logger.LoggerType;
 
+@Getter
 public class MCloud {
     private static MCloud mCloud;
+    private final CloudManager cloudManager;
+    private final CommandMap commandMap;
+    private final Logger logger;
+    private final JsonConfigBuilder jsonConfigBuilder;
     private boolean isEnabled;
-    private CloudManager cloudManager;
     private ConsoleCommandHandler commandHandler;
-    private CommandMap commandMap;
-    private Logger logger;
-    private JsonConfigBuilder jsonConfigBuilder;
     private CloudSettings cloudSettings;
 
 
     public MCloud() {
         mCloud = this;
+        this.logger = new Logger();
+        Runtime.getRuntime().addShutdownHook(new ShutdownTask());
+        logger.info("Cloud starting... " , ConsoleColor.GREEN);
         isEnabled = true;
         this.jsonConfigBuilder = new JsonConfigBuilder("cloudsettings", "settings");
         this.cloudManager = new CloudManager(this.jsonConfigBuilder);
         this.commandHandler = new ConsoleCommandHandler(new CommandMap());
         this.commandMap = commandHandler.getCommandMap();
-        this.logger = new Logger();
         registerListener();
         registerCommand();
         this.commandHandler.startConsoleInput();
         setDefaultSettings();
+        /*
+        try {
+            new Downloader(new URL("https://dms-pictures.pages.dev/Verdox-Naja.png"), "img.png", "test").downloadFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+         */
     }
 
     public static void main(String[] args) {
-        MCloud mCloud = new MCloud();
+        new MCloud();
     }
 
     public static MCloud getCloud() {
@@ -55,7 +68,7 @@ public class MCloud {
     public void shutdown() {
         MCloudStopEvent event = new MCloudStopEvent("The System Shutdown Normal");
         this.cloudManager.callEvent(event);
-        this.getLogger().log(LoggerType.INFO, "The MCloud is try to shutdown");
+        this.getLogger().error("The cloud is trying to shutdown");
         isEnabled = false;
         HandlerList.unregisterAll();
     }
@@ -67,32 +80,21 @@ public class MCloud {
     }
 
     private void registerCommand() {
-        CommandMap commandMap = MCloud.getCloud().getCommandMap();
+        CommandMap commandMap = getCommandMap();
+        commandMap.register("help", new HelpCommand());
         commandMap.register("test", new TestCommand());
-        commandMap.register("stop", new CloudStopCommand(this));
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    public CloudManager getCloudManager() {
-        return cloudManager;
-    }
-
-    public CommandMap getCommandMap() {
-        return commandMap;
+        commandMap.register("stop", new CloudStopCommand());
     }
 
     public boolean isEnabled() {
         return isEnabled;
     }
 
-    public JsonConfigBuilder getJsonConfigBuilder() {
-        return jsonConfigBuilder;
+    private class ShutdownTask extends Thread {
+        @Override
+        public void run() {
+            shutdown();
+        }
     }
 
-    public CloudSettings getCloudSettings() {
-        return cloudSettings;
-    }
 }

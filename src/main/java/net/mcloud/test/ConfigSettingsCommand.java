@@ -9,12 +9,17 @@ import java.util.ArrayList;
 public class ConfigSettingsCommand extends Command {
     private CloudSettings cloudSettings;
 
+    @Override
+    public String usage() {
+        return "Die Einstellungen der Cloud";
+    }
+
     public ConfigSettingsCommand(CloudSettings cloudSettings) {
         this.cloudSettings = cloudSettings;
     }
 
     @Override
     public CommandResponse execute(String command_name, ArrayList<String> args) {
-        return null;
+        return CommandResponse.ERROR;
     }
 }

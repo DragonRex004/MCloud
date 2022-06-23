@@ -21,7 +21,7 @@ public class MethodEventExecutor implements EventExecutor {
         try {
             Class<Event>[] params = (Class<Event>[]) method.getParameterTypes();
             for (Class<Event> param : params) {
-                if(param.isAssignableFrom(event.getClass())) {
+                if (param.isAssignableFrom(event.getClass())) {
                     method.invoke(listener, event);
                     break;
                 }

@@ -1,25 +1,32 @@
-F:\src\testjava\MCloud\src\main\java\net\mcloud\utils\exceptions\CloudException.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\events\EventHandler.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\utils\logger\Logger.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\utils\MethodEventExecutor.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\utils\exceptions\EventException.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\events\Cancellable.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\events\RegisteredListener.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\command\CommandResponse.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\events\server\ConsoleCommandSendEvent.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\utils\logger\LoggerType.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\utils\exceptions\ShortException.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\utils\json\JsonConfigBuilder.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\events\Event.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\events\Listener.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\test\TestCommand.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\command\Command.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\test\TestListener.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\events\HandlerList.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\command\CommandMap.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\utils\CloudManager.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\package-info.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\command\ConsoleCommandHandler.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\events\EventExecutor.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\api\events\EventPriority.java
-F:\src\testjava\MCloud\src\main\java\net\mcloud\MCloud.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\command\CommandMap.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\Cancellable.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\json\CloudSettings.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\exceptions\EventException.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\EventExecutor.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\exceptions\CloudException.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\json\JsonConfigBuilder.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\test\CloudStopListener.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\server\MCloudStopEvent.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\package-info.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\test\TestListener.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\exceptions\ShortException.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\RegisteredListener.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\server\ConsoleCommandSendEvent.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\command\ConsoleCommandHandler.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\MCloud.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\logger\Logger.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\command\impl\HelpCommand.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\EventHandler.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\test\TestCommand.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\test\CloudStopCommand.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\logger\ConsoleColor.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\EventPriority.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\MethodEventExecutor.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\command\CommandResponse.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\CloudManager.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\command\Command.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\Event.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\HandlerList.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\utils\Downloader.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\test\ConfigSettingsCommand.java
+C:\IntelliJ Projects\MCloud\src\main\java\net\mcloud\api\events\Listener.java
