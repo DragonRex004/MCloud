@@ -37,6 +37,6 @@ public abstract class MCloudSubModule {
     }
 
     @Getter
-    public Logger logger = new Logger(getModuleName());
+    public Logger logger = new Logger();
 
 }

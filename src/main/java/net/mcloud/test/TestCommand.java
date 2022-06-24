@@ -1,6 +1,5 @@
 package net.mcloud.test;
 
-import net.mcloud.MCloud;
 import net.mcloud.api.command.Command;
 import net.mcloud.api.command.CommandResponse;
 import net.mcloud.utils.Downloader;
@@ -14,7 +13,7 @@ public class TestCommand extends Command {
     public CommandResponse execute(String command_name, ArrayList<String> args) {
         logger().info("Download started!");
         try {
-            new Downloader(new URL("https://workupload.com/file/a3dY3Lnacec"), "video.mp4").downloadFile();
+            new Downloader(new URL("https://workupload.com/file/a3dY3Lnacec"), "cloudsettings/").downloadFile();
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }

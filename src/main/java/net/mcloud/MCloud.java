@@ -2,6 +2,7 @@ package net.mcloud;
 
 import com.lambdaworks.redis.RedisURI;
 import lombok.Getter;
+import net.mcloud.api.cloudservermanager.CloudServerManager;
 import net.mcloud.api.command.CommandMap;
 import net.mcloud.api.command.ConsoleCommandHandler;
 import net.mcloud.api.command.defaultcommands.CloudStopCommand;
@@ -11,6 +12,7 @@ import net.mcloud.api.events.server.MCloudStopEvent;
 import net.mcloud.api.module.MCloudSubModule;
 import net.mcloud.api.module.ModuleManager;
 import net.mcloud.api.redis.RedisManager;
+import net.mcloud.test.ClientTestCommand;
 import net.mcloud.test.CloudStopListener;
 import net.mcloud.test.TestCommand;
 import net.mcloud.test.TestListener;
@@ -29,13 +31,14 @@ public class MCloud {
     private boolean isEnabled;
     private ConsoleCommandHandler commandHandler;
     private ModuleManager subModuleModuleManager;
+    private CloudServerManager cloudServerManager;
 
     private RedisManager redisManager;
 
 
     public MCloud() {
         mCloud = this;
-        this.logger = new Logger("");
+        this.logger = new Logger();
         Runtime.getRuntime().addShutdownHook(new ShutdownTask());
 
         logger.info("""          
@@ -63,6 +66,7 @@ public class MCloud {
         this.cloudManager = new CloudManager(mCloud);
         this.commandHandler = new ConsoleCommandHandler(new CommandMap());
         this.commandMap = commandHandler.getCommandMap();
+        this.cloudServerManager = new CloudServerManager();
 
         logger.info("Register Listeners");
         registerListener();
@@ -77,6 +81,10 @@ public class MCloud {
         logger.info("Starting Modules");
         subModuleModuleManager.getModules().forEach(MCloudSubModule::onStart);
 
+        logger.info("Starting CloudServerManager");
+        this.cloudServerManager.createCloudServer();
+        this.cloudServerManager.startCloudServer();
+        logger.info("Finished! CloudServerManager ready.");
 
         logger.info("Starting ConsoleInput");
         this.commandHandler.startConsoleInput();
@@ -96,6 +104,7 @@ public class MCloud {
         jsonConfigBuilder.setInteger("tcp-port", 54555, 54555);
         jsonConfigBuilder.setBoolean("deprecated-events", true, true);
         jsonConfigBuilder.setString("redisConnectionString", "redis://redispw@localhost:49153", "redis://redispw@localhost:49153");
+        jsonConfigBuilder.setInteger("max-cloud-proxy-count", 1, 1);
     }
 
     private void registerListener() {
@@ -109,6 +118,7 @@ public class MCloud {
         commandMap.register("help", new HelpCommand());
         commandMap.register("test", new TestCommand());
         commandMap.register("stop", new CloudStopCommand());
+        commandMap.register("test_client", new ClientTestCommand());
     }
 
     public boolean isEnabled() {
@@ -126,6 +136,7 @@ public class MCloud {
             getLogger().warn("Stopped Modules!");
             isEnabled = false;
             HandlerList.unregisterAll();
+            cloudServerManager.stopCloudServer();
             getLogger().info("Good bye!", ConsoleColor.PURPLE);
         }
     }

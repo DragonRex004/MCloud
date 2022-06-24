@@ -1,6 +1,0 @@
-{
-  "deprecated-events": true,
-  "tcp-port": 54555,
-  "redisConnectionString": "redis://redispw@localhost:49153",
-  "udp-port": 54777
-}
