@@ -5,4 +5,5 @@
 
 -> Discord https://discord.gg/juZhJa2qU3
 
-![MCloud](https://user-images.githubusercontent.com/88402271/174807424-9b2a4786-b120-4c22-8243-9dbedf4bdc26.png)
+
+![henris-mega-geiles-tolles-mcloud-logo](https://user-images.githubusercontent.com/88402271/175792531-43461af5-b07e-4101-b341-f21811f0828d.gif)
