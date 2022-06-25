@@ -2,14 +2,35 @@ package net.mcloud.api.command.defaultcommands;
 
 import net.mcloud.api.command.Command;
 import net.mcloud.api.command.CommandResponse;
+import org.jline.reader.impl.completer.ArgumentCompleter;
+import org.jline.reader.impl.completer.StringsCompleter;
+import org.jline.utils.AttributedString;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CloudStopCommand extends Command {
 
     @Override
     public String usage() {
         return "Shutdown the cloud";
+    }
+
+    @Override
+    public String name() {
+        return "stop";
+    }
+
+    @Override
+    public Map<String, List<AttributedString>> widgetOpt() {
+        return new HashMap<>();
+    }
+
+    @Override
+    public List<AttributedString> desc() {
+        return List.of(new AttributedString("Stops the cloud and all running services"));
     }
 
     @Override

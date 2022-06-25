@@ -11,8 +11,8 @@ public class CommandMap {
         COMMAND_MAP = new HashMap<>();
     }
 
-    public void register(String command, Command command_clazz) {
-        COMMAND_MAP.put(command, command_clazz);
+    public void register(Command command_clazz) {
+        COMMAND_MAP.put(command_clazz.name(), command_clazz);
     }
 
     public void unregister(String command) {

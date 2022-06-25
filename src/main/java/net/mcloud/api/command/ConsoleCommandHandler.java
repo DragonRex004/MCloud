@@ -5,15 +5,19 @@ import lombok.Getter;
 import net.mcloud.MCloud;
 import net.mcloud.api.events.server.ConsoleCommandSendEvent;
 import net.mcloud.utils.logger.ConsoleColor;
+import org.jline.console.ArgDesc;
+import org.jline.console.CmdDesc;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.UserInterruptException;
+import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.jline.widget.TailTipWidgets;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 
 public class ConsoleCommandHandler {
 
@@ -38,17 +42,32 @@ public class ConsoleCommandHandler {
             e.printStackTrace();
         }
 
-        LineReader lineReader = LineReaderBuilder.builder()
-                .terminal(terminal)
-                .build();
+        List<String> completer = new ArrayList<>();
+        commandMap.getMap().forEach((s, command) -> {
+            completer.add(s);
+        });
+
+        LineReaderBuilder builder = LineReaderBuilder.builder();
+        builder.completer(new StringsCompleter(completer));
+        LineReader lineReader = builder.terminal(terminal).build();
+
+        Map<String, CmdDesc> tailTips = new HashMap<>();
+
+        commandMap.getMap().forEach((s, command) -> {
+            tailTips.put(s, new CmdDesc(command.desc(), ArgDesc.doArgNames(List.of("[...]")), command.widgetOpt()));
+        });
+
+        TailTipWidgets widgets = new TailTipWidgets(lineReader, tailTips, 10, TailTipWidgets.TipType.TAIL_TIP);
+        widgets.enable();
 
         String prompt = "Cloud> ";
         while (MCloud.getCloud().isEnabled()) {
             String line;
             try {
-                line = lineReader.readLine(ConsoleColor.RESET.getColor() + prompt);
+                lineReader.setAutosuggestion(LineReader.SuggestionType.TAIL_TIP);
+                line = readLine(lineReader, prompt);
                 command_line = line.split(" ");
-                command_name = command_line[0];
+                command_name = command_line[0].replaceAll(" ", "");
                 for (String s : command_line) {
                     if (!s.equals(command_name)) {
                         args.add(s);
@@ -60,22 +79,26 @@ public class ConsoleCommandHandler {
                     if (getCommandMap() == null) {
                         MCloud.getCloud().getLogger().error("CommandMap is null");
                         args.clear();
-                        return;
+                    } else {
+                        Command command = getCommandMap().getMap().get(command_name);
+                        if (command == null) {
+                            MCloud.getCloud().getLogger().error("Dieser Command wurde nicht gefunden!");
+                            args.clear();
+                        } else {
+                            CommandResponse execute = command.execute(command_name, args);
+                            MCloud.getCloud().getLogger().info("Command " + execute.name());
+                            args.clear();
+                        }
                     }
-                    Command command = getCommandMap().getMap().get(command_name);
-                    if (command == null) {
-                        MCloud.getCloud().getLogger().error("Dieser Command wurde nicht gefunden!");
-                        args.clear();
-                        return;
-                    }
-                    CommandResponse execute = command.execute(command_name, args);
-                    MCloud.getCloud().getLogger().info("Command " + execute.name());
-                    args.clear();
                 }
 
             } catch (UserInterruptException | EndOfFileException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private String readLine(LineReader lineReader, String prompt) {
+        return lineReader.readLine(ConsoleColor.RESET.getColor() + prompt).toLowerCase(Locale.ROOT);
     }
 }

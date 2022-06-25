@@ -88,7 +88,6 @@ public class MCloud {
 
         logger.info("Starting ConsoleInput");
         this.commandHandler.startConsoleInput();
-        logger.info("Finished! Cloud ready.", ConsoleColor.GREEN);
     }
 
     public static void main(String[] args) {
@@ -115,10 +114,10 @@ public class MCloud {
 
     private void registerCommand() {
         CommandMap commandMap = getCommandMap();
-        commandMap.register("help", new HelpCommand());
-        commandMap.register("test", new TestCommand());
-        commandMap.register("stop", new CloudStopCommand());
-        commandMap.register("test_client", new ClientTestCommand());
+        commandMap.register(new HelpCommand());
+        commandMap.register(new TestCommand());
+        commandMap.register(new ClientTestCommand());
+        commandMap.register(new CloudStopCommand());
     }
 
     public boolean isEnabled() {
