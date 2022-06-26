@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import net.mcloud.MCloud;
+import net.mcloud.api.cloudservermanager.groups.ServerGroup;
 import net.mcloud.api.cloudservermanager.packets.ProxyAuthPacket;
 import net.mcloud.api.cloudservermanager.packets.ProxyAuthResponsePacket;
 
@@ -12,7 +13,6 @@ import java.io.IOException;
 
 public class CloudServerManager {
     private Server cloudServer;
-    private final int maxCloudServerCount = 1;
     private int cloudServerCount;
     private Kryo kryo;
 
@@ -23,7 +23,8 @@ public class CloudServerManager {
 
     public void startCloudServer() {
 
-        if(!(this.cloudServerCount > this.maxCloudServerCount)) {
+        final int maxCloudServerCount = 1;
+        if(!(this.cloudServerCount > maxCloudServerCount)) {
             this.kryo = this.cloudServer.getKryo();
             this.kryo.register(ProxyAuthPacket.class);
             this.kryo.register(ProxyAuthResponsePacket.class);
@@ -40,7 +41,10 @@ public class CloudServerManager {
                 @Override
                 public void received(Connection connection, Object object) {
                     if(object instanceof ProxyAuthPacket) {
-                        ProxyAuthPacket
+                        ProxyAuthPacket packet = (ProxyAuthPacket) object;
+
+                        ProxyAuthResponsePacket responsePacket = new ProxyAuthResponsePacket("The ProxyAuthPacket is successfully listened!");
+                        connection.sendTCP(responsePacket);
                     }
                 }
             });

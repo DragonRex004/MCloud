@@ -100,12 +100,30 @@ public class JsonConfigBuilder {
         }
     }
 
+    public List<Object> getList(String key) {
+        try {
+            return this.jsonConfig.getJSONArray(key).toList();
+        } catch (JSONException exception) {
+            saveConfig();
+            return null;
+        }
+    }
+
     public void setList(String key, List<Object> newValue, List<Object> defaultValue) {
         try {
             this.jsonConfig.put(key, newValue);
             saveConfig();
         } catch (JSONException exception) {
             this.jsonConfig.put(key, defaultValue);
+            saveConfig();
+        }
+    }
+
+    public void setList(String key, List<Object> newValue) {
+        try {
+            this.jsonConfig.put(key, newValue);
+            saveConfig();
+        } catch (JSONException exception) {
             saveConfig();
         }
     }
