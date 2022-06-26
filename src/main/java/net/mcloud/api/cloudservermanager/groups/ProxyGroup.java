@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter @Setter @AllArgsConstructor
 public class ProxyGroup {
-    private String serverType;
+    private ServerType serverType;
     private String ip;
     private int port;
     private String startShPath;

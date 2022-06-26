@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter @Setter @AllArgsConstructor
 public class LobbyGroup {
-    private String serverType;
+    private ServerType serverType;
     private String ip;
     private int port;
     private String startShPath;

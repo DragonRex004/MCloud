@@ -91,7 +91,7 @@ public class MCloud {
         logger.info("Starting CloudGroupListsSystem");
         this.cloudGroupLists = new CloudGroupLists(jsonConfigBuilder);
         this.cloudGroupLists.startConfigSaveTimer();
-        logger.info("");
+        logger.info("Finished! CloudGroupListsSystem ready.");
 
         logger.info("Starting ConsoleInput");
         this.commandHandler.startConsoleInput();
@@ -103,6 +103,10 @@ public class MCloud {
 
     public static MCloud getCloud() {
         return mCloud;
+    }
+
+    public CloudGroupLists getCloudGroupLists() {
+        return cloudGroupLists;
     }
 
     public void setDefaultSettings() {

@@ -5,7 +5,10 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import net.mcloud.MCloud;
+import net.mcloud.api.cloudservermanager.groups.LobbyGroup;
 import net.mcloud.api.cloudservermanager.groups.ProxyGroup;
+import net.mcloud.api.cloudservermanager.groups.ServerGroup;
+import net.mcloud.api.cloudservermanager.groups.ServerType;
 import net.mcloud.api.cloudservermanager.packets.AuthPacket;
 import net.mcloud.api.cloudservermanager.packets.AuthResponsePacket;
 
@@ -35,12 +38,25 @@ public class CloudServerManager {
                 @Override
                 public void received(Connection connection, Object object) {
                     if(object instanceof AuthPacket packet) {
-                        MCloud.getCloud().getLogger().info("The CloudServerManager has received " + packet.getServerType() + " " + packet.getIp() + ":" + packet.getPort());
-                        if(packet.getServerType().equalsIgnoreCase("Proxy")) {
-                            ProxyGroup proxyGroup = new ProxyGroup("Proxy", packet.getIp(), packet.getPort(), packet.getStartShPath());
-
+                        MCloud.getCloud().getLogger().info("The CloudServerManager has received " + packet.getServerType() + " " + packet.getServerName() + " " + packet.getIp() + ":" + packet.getPort());
+                        switch (packet.getServerType()) {
+                            case "Proxy" -> {
+                                ProxyGroup proxyGroup = new ProxyGroup(ServerType.PROXY, packet.getIp(), packet.getPort(), packet.getStartShPath());
+                                MCloud.getCloud().getCloudGroupLists().getProxyGroups().add(proxyGroup);
+                            }
+                            case "Lobby" -> {
+                                LobbyGroup lobbyGroup = new LobbyGroup(ServerType.LOBBY, packet.getIp(), packet.getPort(), packet.getStartShPath());
+                                MCloud.getCloud().getCloudGroupLists().getLobbyGroups().add(lobbyGroup);
+                            }
+                            case "Server" -> {
+                                ServerGroup serverGroup = new ServerGroup(ServerType.SERVER, packet.getIp(), packet.getPort(), packet.getStartShPath());
+                                MCloud.getCloud().getCloudGroupLists().getServerGroups().add(serverGroup);
+                            }
+                            default -> {
+                                MCloud.getCloud().getLogger().error("The selected Server Type is not available!");
+                            }
                         }
-                        AuthResponsePacket responsePacket = new AuthResponsePacket("The ProxyAuthPacket is successfully listened!");
+                        AuthResponsePacket responsePacket = new AuthResponsePacket("The AuthPacket is successfully listened!");
                         connection.sendTCP(responsePacket);
                     }
                 }
