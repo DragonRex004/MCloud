@@ -5,9 +5,9 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import net.mcloud.MCloud;
-import net.mcloud.api.cloudservermanager.groups.ServerGroup;
-import net.mcloud.api.cloudservermanager.packets.ProxyAuthPacket;
-import net.mcloud.api.cloudservermanager.packets.ProxyAuthResponsePacket;
+import net.mcloud.api.cloudservermanager.groups.ProxyGroup;
+import net.mcloud.api.cloudservermanager.packets.AuthPacket;
+import net.mcloud.api.cloudservermanager.packets.AuthResponsePacket;
 
 import java.io.IOException;
 
@@ -26,28 +26,31 @@ public class CloudServerManager {
         final int maxCloudServerCount = 1;
         if(!(this.cloudServerCount > maxCloudServerCount)) {
             this.kryo = this.cloudServer.getKryo();
-            this.kryo.register(ProxyAuthPacket.class);
-            this.kryo.register(ProxyAuthResponsePacket.class);
+            this.kryo.register(AuthPacket.class);
+            this.kryo.register(AuthResponsePacket.class);
             this.cloudServer.start();
             int tcp = MCloud.getCloud().getJsonConfigBuilder().getInteger("tcp-port", 54555);
             int udp = MCloud.getCloud().getJsonConfigBuilder().getInteger("udp-port", 54777);
+            this.cloudServer.addListener(new Listener() {
+                @Override
+                public void received(Connection connection, Object object) {
+                    if(object instanceof AuthPacket packet) {
+                        MCloud.getCloud().getLogger().info("The CloudServerManager has received " + packet.getServerType() + " " + packet.getIp() + ":" + packet.getPort());
+                        if(packet.getServerType().equalsIgnoreCase("Proxy")) {
+                            ProxyGroup proxyGroup = new ProxyGroup("Proxy", packet.getIp(), packet.getPort(), packet.getStartShPath());
+
+                        }
+                        AuthResponsePacket responsePacket = new AuthResponsePacket("The ProxyAuthPacket is successfully listened!");
+                        connection.sendTCP(responsePacket);
+                    }
+                }
+            });
             try {
                 this.cloudServer.bind(tcp, udp);
                 MCloud.getCloud().getLogger().info("The CloudServerManager is successfully started!");
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            this.cloudServer.addListener(new Listener() {
-                @Override
-                public void received(Connection connection, Object object) {
-                    if(object instanceof ProxyAuthPacket) {
-                        ProxyAuthPacket packet = (ProxyAuthPacket) object;
-
-                        ProxyAuthResponsePacket responsePacket = new ProxyAuthResponsePacket("The ProxyAuthPacket is successfully listened!");
-                        connection.sendTCP(responsePacket);
-                    }
-                }
-            });
         } else {
             MCloud.getCloud().getLogger().error("You have already one Cloud Server Enabled!");
         }

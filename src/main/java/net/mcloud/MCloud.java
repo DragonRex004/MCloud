@@ -2,6 +2,7 @@ package net.mcloud;
 
 import com.lambdaworks.redis.RedisURI;
 import lombok.Getter;
+import net.mcloud.api.cloudservermanager.CloudGroupLists;
 import net.mcloud.api.cloudservermanager.CloudServerManager;
 import net.mcloud.api.command.CommandMap;
 import net.mcloud.api.command.ConsoleCommandHandler;
@@ -32,6 +33,7 @@ public class MCloud {
     private ConsoleCommandHandler commandHandler;
     private ModuleManager subModuleModuleManager;
     private CloudServerManager cloudServerManager;
+    private CloudGroupLists cloudGroupLists;
 
     private RedisManager redisManager;
 
@@ -85,6 +87,11 @@ public class MCloud {
         this.cloudServerManager.createCloudServer();
         this.cloudServerManager.startCloudServer();
         logger.info("Finished! CloudServerManager ready.");
+
+        logger.info("Starting CloudGroupListsSystem");
+        this.cloudGroupLists = new CloudGroupLists(jsonConfigBuilder);
+        this.cloudGroupLists.startConfigSaveTimer();
+        logger.info("");
 
         logger.info("Starting ConsoleInput");
         this.commandHandler.startConsoleInput();

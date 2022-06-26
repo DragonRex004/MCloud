@@ -6,8 +6,8 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import lombok.Getter;
 import net.mcloud.MCloud;
-import net.mcloud.api.cloudservermanager.packets.ProxyAuthPacket;
-import net.mcloud.api.cloudservermanager.packets.ProxyAuthResponsePacket;
+import net.mcloud.api.cloudservermanager.packets.AuthPacket;
+import net.mcloud.api.cloudservermanager.packets.AuthResponsePacket;
 
 import java.io.IOException;
 
@@ -29,8 +29,23 @@ public class CloudProxyGroup {
             int tcp = MCloud.getCloud().getJsonConfigBuilder().getInteger("tcp-port", 54555);
             int udp = MCloud.getCloud().getJsonConfigBuilder().getInteger("udp-port", 54777);
             this.kryo = this.proxy.getKryo();
-            this.kryo.register(ProxyAuthPacket.class);
-            this.kryo.register(ProxyAuthResponsePacket.class);
+            this.kryo.register(AuthPacket.class);
+            this.kryo.register(AuthResponsePacket.class);
+            this.proxy.addListener(new Listener() {
+                @Override
+                public void connected(Connection connection) {
+                    AuthPacket proxyAuthPacket = new AuthPacket("Proxy", proxy.getRemoteAddressTCP().getHostString(), proxy.getRemoteAddressTCP().getPort(), "cloud/templates/proxy-1/start.sh");
+                    connection.sendTCP(proxyAuthPacket);
+                }
+            });
+            this.proxy.addListener(new Listener() {
+                @Override
+                public void received(Connection connection, Object object) {
+                    if(object instanceof AuthResponsePacket responsePacket) {
+                        MCloud.getCloud().getLogger().info("The CloudProxyGroup has received " + responsePacket.getResponse());
+                    }
+                }
+            });
             this.proxy.start();
             try {
                 this.proxy.connect(5000, "127.0.0.1", tcp, udp);
@@ -38,13 +53,6 @@ public class CloudProxyGroup {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            this.proxy.addListener(new Listener() {
-                @Override
-                public void connected(Connection connection) {
-                    ProxyAuthPacket proxyAuthPacket = new ProxyAuthPacket("Proxy", proxy.getRemoteAddressTCP().getHostString(), proxy.getRemoteAddressTCP().getPort());
-                    connection.sendTCP(proxyAuthPacket);
-                }
-            });
         } else {
             MCloud.getCloud().getLogger().error("You have already one Cloud Proxy Enabled!");
         }
